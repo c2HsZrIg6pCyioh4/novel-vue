@@ -1,0 +1,43 @@
+:root {
+    --bg: #ffffff;
+    --text: #0f172a;
+    --muted: #64748b;
+    --primary: #2563eb;
+    --panel: #ffffffcc;
+    --border: #e2e8f0;
+}
+:root[data-theme='dark'] {
+    --bg: #0b0f17;
+    --text: #e5e7eb;
+    --muted: #94a3b8;
+    --primary: #60a5fa;
+    --panel: #0b0f17cc;
+    --border: #1f2937;
+}
+:root[data-theme='sepia'] {
+    --bg: #f6f9e6;           /* 护眼背景：柔和米绿 */
+    --text: #2d3c2d;         /* 护眼文字：墨绿色 */
+    --muted: #5a6a5a;        /* 次要文字：深灰绿 */
+    --primary: #4a9c6b;      /* 主色：清新翠绿 */
+    --panel: #f0f4dbcc;      /* 卡片背景（半透明护眼色） */
+    --border: #cddcbe;       /* 边框：协调浅绿 */
+}
+* { box-sizing: border-box; }
+html, body, #app { height: 100%; }
+body { margin: 0; font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji,sans-serif; background: var(--bg); color: var(--text); }
+a { color: var(--primary); text-decoration: none; }
+a:hover { text-decoration: underline; }
+.container { max-width: 1080px; padding: 16px; margin: 0 auto; }
+.grid { display: grid; gap: 16px; }
+.grid.cols-3 { grid-template-columns: repeat(3,minmax(0,1fr)); }
+@media (max-width: 900px){ .grid.cols-3 { grid-template-columns: repeat(2,minmax(0,1fr)); } }
+@media (max-width: 640px){ .grid.cols-3 { grid-template-columns: 1fr; } }
+.card { border: 1px solid var(--border); background: var(--panel); border-radius: 12px; padding: 12px; }
+.btn { display:inline-flex; align-items:center; gap:.5rem; border:1px solid var(--border); padding:.5rem .75rem; border-radius: 10px; cursor:pointer; background: transparent; }
+.btn.primary { background: var(--primary); border-color: var(--primary); color: white; }
+.input { width:100%; padding:.6rem .8rem; border:1px solid var(--border); background: transparent; border-radius: 10px; color: var(--text); }
+.badge { font-size:.75rem; padding:.15rem .5rem; border-radius: 999px; border:1px solid var(--border); }
+.flex { display:flex; gap:.75rem; align-items:center; }
+.space-between { display:flex; align-items:center; justify-content:space-between; }
+.mt-2 { margin-top: .5rem; }
+.mt-3 { margin-top: 1rem; }
