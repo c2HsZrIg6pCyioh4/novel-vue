@@ -7,6 +7,8 @@
     <button class="btn" :disabled="!prevId" @click="go(prevId)">上一章</button>
     <button class="btn" :disabled="!nextId" @click="go(nextId)">下一章</button>
   </div>
+  <!-- 引入广告组件 -->
+  <AdSlot />
 </template>
 
 <script setup lang="ts">
@@ -14,6 +16,7 @@ import { ref, watchEffect, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchChaptersList, fetchChapters } from '../api'
 import type { Chapter } from '../types/book'
+import AdSlot from './AdSlot.vue' // 引入广告组件
 import { marked } from 'marked'
 
 const route = useRoute()
