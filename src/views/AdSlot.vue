@@ -2,7 +2,7 @@
   <div ref="adContainer" class="ad-slot">
     <!-- Google 测试广告 -->
     <ins class="adsbygoogle"
-         data-ad-client="ca-pub-3940256099942544"
+         data-ad-client="ca-pub-4075901524204194"
          data-ad-slot="6300978111"
          data-ad-format="auto"
          data-full-width-responsive="true"></ins>

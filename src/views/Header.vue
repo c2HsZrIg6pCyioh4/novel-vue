@@ -13,7 +13,7 @@
     <button class="btn" @click="toggleTheme">主题：{{ themeLabel }}</button>
   </header>
   <router-link  v-if="isReaderPage" to="/" style="font-weight:700;text-decoration:none;">📚 Novel Reader</router-link>
-
+  <meta name="google-adsense-account" content="ca-pub-4075901524204194">
 </template>
 
 <script setup lang="ts">
