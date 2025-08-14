@@ -42,7 +42,10 @@ async function loadChaptersList(bookId: string) {
 async function loadChapter(bookId: string, chapterId: string) {
   // 获取当前章节内容
   chapter.value = await fetchChapters(bookId, chapterId)
-
+// 更新页面标题为章节标题
+  if (chapter.value?.title) {
+    document.title = chapter.value.title
+  }
   // 找到当前章节在章节列表中的索引
   const idx = chaptersList.value.findIndex(c => c.id === chapterId)
 
