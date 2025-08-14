@@ -1,25 +1,20 @@
 <template>
-  <div class="card">
-    <h2>{{ chapter?.title }}</h2>
-
-    <!-- 小说内容显示 -->
-    <div class="content" v-if="chapter?.content" @copy.prevent="onCopy">
-      {{ chapter.content }}
-    </div>
-
-    <!-- 分页按钮 -->
-    <div class="flex mt-3" style="justify-content: space-between;">
-      <button class="btn" :disabled="!prevId" @click="go(prevId)">上一章</button>
-      <button class="btn" :disabled="!nextId" @click="go(nextId)">下一章</button>
-    </div>
+  <h2  >{{ chapter?.title }}</h2>
+  <!-- 小说内容显示 -->
+  <div class="content" v-if="chapter?.content"  v-html="renderedMarkdown"></div>
+  <!-- 分页按钮 -->
+  <div class="flex mt-3" style="justify-content: space-between;">
+    <button class="btn" :disabled="!prevId" @click="go(prevId)">上一章</button>
+    <button class="btn" :disabled="!nextId" @click="go(nextId)">下一章</button>
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect, onMounted } from 'vue'
+import { ref, watchEffect, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchChaptersList, fetchChapters } from '../api'
 import type { Chapter } from '../types/book'
+import { marked } from 'marked'
 
 const route = useRoute()
 const router = useRouter()
@@ -28,6 +23,11 @@ const chapter = ref<Chapter | null>(null)
 const chaptersList = ref<Chapter[]>([])
 const prevId = ref<string | null>(null)
 const nextId = ref<string | null>(null)
+
+// Markdown 渲染
+const renderedMarkdown = computed(() => {
+  return chapter.value?.content ? marked(chapter.value.content) : ''
+})
 
 // 加载章节列表（用于导航）
 async function loadChaptersList(bookId: string) {
@@ -60,25 +60,16 @@ function go(chapterId: string | null) {
   if (chapterId) router.push(`/reader/${route.params.id}/${chapterId}`)
 }
 
-// 自定义复制事件，去掉换行
-function onCopy(event: ClipboardEvent) {
-  if (!chapter.value) return
-  const text = chapter.value.content.replace(/\n/g, '')
-  event.clipboardData?.setData('text/plain', text)
-  event.preventDefault()
-}
 
-// 初始化
 async function init() {
   const bookId = route.params.id as string
   const chapterId = route.params.chapter as string
-  await loadChaptersList(bookId)       // 获取章节列表
-  await loadChapter(bookId, chapterId) // 获取单章内容
+  await loadChaptersList(bookId)
+  await loadChapter(bookId, chapterId)
 }
 
 onMounted(init)
 
-// 监听路由变化切换章节
 watchEffect(() => {
   const bookId = route.params.id as string
   const chapterId = route.params.chapter as string
@@ -99,11 +90,13 @@ watchEffect(() => {
   line-height: 1.8;
   font-size: 16px;
   color: var(--text);
-  white-space: pre-wrap; /* 保留换行符，适合小说段落 */
   text-align: justify;
   padding: 0 4px;
-  /* 可选首行缩进 */
+}
+
+.content p {
   text-indent: 2em;
+  margin-bottom: 1em;
 }
 
 .flex {
