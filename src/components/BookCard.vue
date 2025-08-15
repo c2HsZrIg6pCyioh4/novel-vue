@@ -6,7 +6,12 @@
       <p class="meta"><span class="badge">{{ book.author }}</span></p>
       <p class="desc">{{ book.description }}</p>
       <div class="flex mt-2">
-        <router-link class="btn primary" :to="`/reader/${book.id}/1`">开始阅读</router-link>
+        <button 
+          class="btn primary" 
+          @click.stop="startReading(book.id)"
+        >
+          开始阅读
+        </button>
         <button class="btn" @click.stop="$emit('toggle', book)">{{ inShelf ? '移出书架' : '加入书架' }}</button>
       </div>
     </div>
@@ -14,9 +19,17 @@
 </template>
 
 <script setup lang="ts">
+import { useRouter } from 'vue-router'
 import type { Book } from '@/types/book'
+
+const router = useRouter()
 defineProps<{ book: Book, inShelf?: boolean }>()
 defineEmits<{ (e:'toggle', book: Book): void }>()
+
+function startReading(bookId: string) {
+  const lastRead = localStorage.getItem(`last-read-${bookId}`)
+  router.push(`/reader/${bookId}/${lastRead || '1'}`)
+}
 </script>
 
 <style scoped>

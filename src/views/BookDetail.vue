@@ -9,12 +9,12 @@
           <p class="mt-2"><span class="badge">{{ book?.author }}</span></p>
           <p class="mt-2" style="color:var(--muted)">{{ book?.description }}</p>
           <div class="flex mt-2" style="gap:8px;">
-            <router-link
+            <button
                 class="btn primary"
-                :to="`/reader/${book?.id}/1`"
+                @click="book?.id && startReading(book.id)"
             >
               开始阅读
-            </router-link>
+            </button>
             <button class="btn" @click="book && shelf.toggle(book)">
               {{ book && shelf.inShelf(book.id) ? '移出书架' : '加入书架' }}
             </button>
@@ -42,14 +42,16 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
-import { fetchBooks, fetchChaptersList } from '../api'  // 使用新的 fetchChaptersList
+import { fetchBooks, fetchChaptersList } from '../api'
 import type { Book, Chapter } from '../types/book'
 import { useBookshelf } from '../stores/bookshelf'
+import { useReadingProgress } from '../composables/useReadingProgress'
 
 const route = useRoute()
 const book = ref<Book | null>(null)
 const chapters = ref<Chapter[]>([])
 const shelf = useBookshelf()
+const { startReading } = useReadingProgress()
 
 onMounted(async () => {
   const books = await fetchBooks()

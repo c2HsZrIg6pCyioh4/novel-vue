@@ -1,7 +1,17 @@
 <template>
-  <h2  >{{ chapter?.title }}</h2>
+  <h2>{{ chapter?.title }}</h2>
+  
+  <!-- 开始阅读按钮 -->
+  <button 
+    v-if="!chapter?.content" 
+    class="btn start-btn" 
+    @click="startReading"
+  >
+    开始阅读
+  </button>
+
   <!-- 小说内容显示 -->
-  <div class="content" v-if="chapter?.content"  v-html="renderedMarkdown"></div>
+  <div class="content" v-if="chapter?.content" v-html="renderedMarkdown"></div>
   <!-- 分页按钮 -->
   <div class="flex mt-3" style="justify-content: space-between;">
     <button class="btn" :disabled="!prevId" @click="go(prevId)">上一章</button>
@@ -9,7 +19,6 @@
   </div>
   <!-- 引入广告组件 -->
   <AdSlot />
-  <CmpConsent/>
 </template>
 
 <script setup lang="ts">
@@ -68,6 +77,19 @@ function go(chapterId: string | null) {
   if (chapterId) router.push(`/reader/${route.params.id}/${chapterId}`)
 }
 
+// 开始阅读 - 跳转到上次阅读位置或第一章
+function startReading() {
+  const bookId = route.params.id as string
+  const lastRead = localStorage.getItem(`last-read-${bookId}`)
+  const firstChapterId = chaptersList.value[0]?.id
+  
+  if (lastRead) {
+    go(lastRead)
+  } else if (firstChapterId) {
+    go(firstChapterId)
+  }
+}
+
 
 async function init() {
   const bookId = route.params.id as string
@@ -118,5 +140,12 @@ watchEffect(() => {
 .btn {
   padding: 0.6em 1.2em;
   font-size: 0.95rem;
+}
+
+.start-btn {
+  display: block;
+  margin: 1rem auto;
+  padding: 0.8em 1.6em;
+  font-size: 1.1rem;
 }
 </style>
