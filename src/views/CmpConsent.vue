@@ -75,9 +75,6 @@ function savePreferences(acceptAll = null) {
     preferences: consentPreferences,
     timestamp: Date.now()
   }))
-
-  showConsent.value = false
-  emit('consent-updated', consentPreferences)
 }
 </script>
 
