@@ -9,6 +9,7 @@
   </div>
   <!-- 引入广告组件 -->
   <AdSlot />
+  <CmpConsent/>
 </template>
 
 <script setup lang="ts">
@@ -17,6 +18,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { fetchChaptersList, fetchChapters } from '../api'
 import type { Chapter } from '../types/book'
 import AdSlot from './AdSlot.vue' // 引入广告组件
+import CmpConsent from './CmpConsent.vue' // 引入广告组件
 import { marked } from 'marked'
 
 const route = useRoute()
