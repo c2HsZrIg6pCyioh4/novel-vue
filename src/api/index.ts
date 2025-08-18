@@ -21,33 +21,33 @@ async function checkServerHealth(url: string): Promise<boolean> {
 
 export async function initServerAddresses(): Promise<void> {
     const currentOrigin = window.location.origin
-    const servers = [currentOrigin]
+    let servers: string[] = []
 
     try {
         const res = await fetch(`${currentOrigin}/novel/server.json`)
         if (res.ok) {
             const data = await res.json()
             if (Array.isArray(data) && data.length > 0) {
-                data.forEach(item => {
+                for (const item of data) { // ✅ 改成 for...of
                     const server = item?.server_address
-                    if (server?.startsWith('http') && server !== currentOrigin) {
-                        servers.push(server)
+                    if (server?.startsWith('http')) {
+                        const isHealthy = await checkServerHealth(server)
+                        if (isHealthy) {
+                            servers.push(server)
+                        }
                     }
-                })
-                // Update serverAddress with first valid server from response
-                const firstValidItem = data.find(item => 
-                    item?.server_address?.startsWith('http') && 
-                    item.server_address !== currentOrigin
-                )
-                if (firstValidItem?.server_address) {
-                    serverAddress = firstValidItem.server_address
                 }
             }
         }
     } catch {
-        // Ignore errors, fallback to just current origin
+        // 忽略异常，后面走兜底逻辑
     }
 
+    if (servers.length === 0) {
+        servers = [currentOrigin] // ✅ 兜底写入当前域名
+    }
+
+    serverAddress = servers[0]
     localStorage.setItem(STORAGE_KEY, JSON.stringify(servers))
 }
 
