@@ -75,6 +75,9 @@ function savePreferences(acceptAll = null) {
     preferences: consentPreferences,
     timestamp: Date.now()
   }))
+  
+  // Close the banner after saving
+  showConsent.value = false
 }
 </script>
 
