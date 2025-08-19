@@ -42,6 +42,7 @@
 </template>
 
 <script setup>
+import { loadGA } from '../utils/loadGA'
 import { ref, onMounted, reactive } from 'vue'
 
 const showConsent = ref(false)
@@ -61,6 +62,10 @@ onMounted(() => {
       showConsent.value = true
     } else {
       Object.assign(consentPreferences, savedConsent.preferences)
+      // 如果用户之前已同意过 analytics，直接加载 GA
+      if (consentPreferences.analytics) {
+        loadGA()
+      }
     }
   }
 })
@@ -76,6 +81,10 @@ function savePreferences(acceptAll = null) {
     timestamp: Date.now()
   }))
   
+  // ✅ 只有在用户勾选了 "分析 Cookie" 时才加载 GA
+  if (consentPreferences.analytics) {
+    loadGA()
+  }
   // Close the banner after saving
   showConsent.value = false
 }
