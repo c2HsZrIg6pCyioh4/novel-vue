@@ -25,7 +25,7 @@
 import { ref, watchEffect, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchChaptersList, fetchChapters } from '../api'
-import type { Chapter } from '../types/book'
+import type {Chapter, ChapterDetail} from '../types/book'
 import AdSlot from './AdSlot.vue' // 引入广告组件
 import CmpConsent from './CmpConsent.vue' // 引入广告组件
 import { marked } from 'marked'
@@ -34,7 +34,7 @@ const route = useRoute()
 const router = useRouter()
 
 const chapter = ref<Chapter | null>(null)
-const chaptersList = ref<Chapter[]>([])
+const chaptersList = ref<ChapterDetail[]>([])
 const prevId = ref<string | null>(null)
 const nextId = ref<string | null>(null)
 
@@ -58,14 +58,13 @@ async function loadChapter(bookId: string, chapterId: string) {
     document.title = chapter.value.title
   }
   // 找到当前章节在章节列表中的索引
-  const idx = chaptersList.value.findIndex(c => c.id === chapterId)
-
+  const idx = chaptersList.value.findIndex(c => c.chapter_index === Number(chapterId))
   // 明确判断上一章
-  prevId.value = idx > 0 ? chaptersList.value[idx - 1].id : null
+  prevId.value = idx > 0 ? chaptersList.value[idx - 1].chapter_index : null
 
   // 明确判断下一章（最后一章禁用）
   nextId.value = idx >= 0 && idx < chaptersList.value.length - 1
-      ? chaptersList.value[idx + 1].id
+      ? chaptersList.value[idx + 1].chapter_index
       : null
 
   // 保存阅读进度
@@ -81,7 +80,7 @@ function go(chapterId: string | null) {
 function startReading() {
   const bookId = route.params.id as string
   const lastRead = localStorage.getItem(`last-read-${bookId}`)
-  const firstChapterId = chaptersList.value[0]?.id
+  const firstChapterId = chaptersList.value[0]?.chapter_index
   
   if (lastRead) {
     go(lastRead)

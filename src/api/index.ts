@@ -1,4 +1,4 @@
-import type { Book, Chapter } from '@/types/book'
+import type { Chapter, ChapterDetail, Novel} from '@/types/book'
 
 const STORAGE_KEY = 'novel_servers' // 保存 server 地址列表
 const CACHE_KEY = 'novel_servers_cache' // 保存每个 server 的健康检查时间
@@ -20,7 +20,7 @@ async function checkServerWithCache(server: string, cache: CachedServer[]): Prom
     const now = Date.now()
     let cached = cache.find(c => c.server === server)
     try {
-        const testUrl = `${server}/mock/healthcheck.json`
+        const testUrl = `${server}/health`
         const controller = new AbortController()
         const timeout = setTimeout(() => controller.abort(), 3000)
         const res = await fetch(testUrl, { signal: controller.signal })
@@ -131,29 +131,29 @@ export async function getServerAddress(): Promise<ServerResult> {
 }
 
 // 获取书籍列表
-export async function fetchBooks(): Promise<Book[]> {
+export async function fetchBooks(): Promise<Novel[]> {
     const { default: server } = await getServerAddress()
-    const res = await fetch(`${server}/mock/books.json`)
+    const res = await fetch(`${server}/novels`)
     return res.json()
 }
 
 // 从自定义 URL 获取书籍列表
-export async function fetchFromCustomUrl(url: string): Promise<Book[]> {
+export async function fetchFromCustomUrl(url: string): Promise<Novel[]> {
     const res = await fetch(url)
     if (!res.ok) throw new Error('Failed to fetch from custom URL')
     return res.json()
 }
 
 // 获取章节内容
-export async function fetchChapters(bookId: string, chapterId: string): Promise<Chapter> {
+export async function fetchChapters(bookId: string, chapterId: bigint): Promise<Chapter> {
     const { default: server } = await getServerAddress()
-    const res = await fetch(`${server}/mock/chapters/${bookId}/${chapterId}.json`)
+    const res = await fetch(`${server}/chapters/${bookId}/${chapterId}`)
     return res.json()
 }
 
 // 获取书籍章节列表
-export async function fetchChaptersList(bookId: string): Promise<Chapter[]> {
+export async function fetchChaptersList(bookId: string): Promise<ChapterDetail[]> {
     const { default: server } = await getServerAddress()
-    const res = await fetch(`${server}/mock/chapters/${bookId}/chapters.json`)
+    const res = await fetch(`${server}/novels/${bookId}/chapters`)
     return res.json()
 }

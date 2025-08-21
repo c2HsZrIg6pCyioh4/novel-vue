@@ -3,20 +3,20 @@
     <!-- 左侧书籍信息 -->
     <div class="card">
       <div class="flex">
-        <img :src="book?.cover" style="width:120px;height:160px;border-radius:10px;border:1px solid var(--border)" />
+        <img :src="book?.cover_url" style="width:120px;height:160px;border-radius:10px;border:1px solid var(--border)" />
         <div style="margin-left:12px">
-          <h2 style="margin:0">{{ book?.title }}</h2>
+          <h2 style="margin:0">{{ book?.name }}</h2>
           <p class="mt-2"><span class="badge">{{ book?.author }}</span></p>
           <p class="mt-2" style="color:var(--muted)">{{ book?.description }}</p>
           <div class="flex mt-2" style="gap:8px;">
             <button
                 class="btn primary"
-                @click="book?.id && startReading(book.id)"
+                @click="book?.novel_id && startReading(book.novel_id)"
             >
               开始阅读
             </button>
             <button class="btn" @click="book && shelf.toggle(book)">
-              {{ book && shelf.inShelf(book.id) ? '移出书架' : '加入书架' }}
+              {{ book && shelf.inShelf(book.novel_id) ? '移出书架' : '加入书架' }}
             </button>
           </div>
         </div>
@@ -29,9 +29,9 @@
       <ul
           style="list-style:none;padding:0;margin-top:.5rem;display:grid;gap:.25rem;max-height:60vh;overflow:auto;"
       >
-        <li v-for="c in chapters" :key="c.id">
-          <router-link :to="`/reader/${book?.id}/${c.id}`">
-            {{ c.id }}. {{ c.title }}
+        <li v-for="c in chapters_list" :key="c.chapter_index">
+          <router-link :to="`/reader/${book?.novel_id}/${c.chapter_index}`">
+            {{ c.chapter_index }}. {{ c.title }}
           </router-link>
         </li>
       </ul>
@@ -43,23 +43,25 @@
 import { onMounted, ref } from 'vue'
 import { useRoute } from 'vue-router'
 import { fetchBooks, fetchChaptersList } from '../api'
-import type { Book, Chapter } from '../types/book'
+import type {Novel, Chapter, ChapterDetail} from '../types/book'
 import { useBookshelf } from '../stores/bookshelf'
 import { useReadingProgress } from '../composables/useReadingProgress'
 
 const route = useRoute()
-const book = ref<Book | null>(null)
+const book = ref<Novel | null>(null)
 const chapters = ref<Chapter[]>([])
+const chapters_list = ref<ChapterDetail[]>([])
+
 const shelf = useBookshelf()
 const { startReading } = useReadingProgress()
 
 onMounted(async () => {
   const books = await fetchBooks()
-  book.value = books.find(b => b.id === route.params.id) || null
+  book.value = books.find(b => b.novel_id === route.params.id) || null
 
   if (book.value) {
     // 获取章节列表而不是整本章节内容
-    chapters.value = await fetchChaptersList(book.value.id)
+    chapters_list.value = await fetchChaptersList(book.value.novel_id)
   }
 })
 </script>

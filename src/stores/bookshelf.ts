@@ -1,18 +1,18 @@
 import { defineStore } from 'pinia'
-import type { Book } from '@/types/book'
+import type { Novel } from '@/types/book'
 
-interface State { items: Book[] }
+interface State { items: Novel[] }
 export const useBookshelf = defineStore('shelf', {
     state: (): State => ({
-        items: JSON.parse(localStorage.getItem('bookshelf') || '[]') as Book[]
+        items: JSON.parse(localStorage.getItem('bookshelf') || '[]') as Novel[]
     }),
     actions: {
-        toggle(book: Book){
-            const idx = this.items.findIndex(b => b.id === book.id)
+        toggle(book: Novel){
+            const idx = this.items.findIndex(b => b.novel_id === book.novel_id)
             if (idx >= 0) this.items.splice(idx, 1)
             else this.items.unshift(book)
             localStorage.setItem('bookshelf', JSON.stringify(this.items))
         },
-        inShelf(id: string){ return this.items.some(b => b.id === id) }
+        inShelf(novel_id: string){ return this.items.some(b => b.novel_id === novel_id) }
     }
 })
