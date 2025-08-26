@@ -1,5 +1,5 @@
 // src/utils/loadGA.ts
-export function loadGA(trackingId: string = 'G-3XMELDRMM3') {
+export function loadGA(trackingId: string = 'G-29TDDBHRXM') {
     if (document.getElementById('ga-script')) return // 防止重复加载
 
     const script = document.createElement('script')
