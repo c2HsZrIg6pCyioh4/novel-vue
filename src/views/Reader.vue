@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watchEffect, onMounted, computed } from 'vue'
+import { ref, watch, onMounted, computed } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { fetchChaptersList, fetchChapters } from '../api'
 import type {Chapter, ChapterDetail} from '../types/book'
@@ -101,13 +101,29 @@ async function init() {
   }
 }
 
-onMounted(init)
-
-watchEffect(() => {
+onMounted(async () => {
   const bookId = route.params.id as string
   const chapterId = route.params.chapter as string
-  if (bookId && chapterId) loadChapter(bookId, chapterId)
+  await loadChaptersList(bookId)
+  if (!hasLoadedChapter.value) {
+    await loadChapter(bookId, chapterId)
+    hasLoadedChapter.value = true
+  }
 })
+
+// 只在切换章节时加载，不重复加载
+watch(
+    () => [route.params.id, route.params.chapter],
+    async ([bookId, chapterId], [oldBookId, oldChapterId]) => {
+      if (!bookId || !chapterId) return
+      // 跳过首次初始化
+      if (!hasLoadedChapter.value) return
+      // 仅在路由参数变化时加载
+      if (bookId !== oldBookId || chapterId !== oldChapterId) {
+        await loadChapter(bookId, chapterId)
+      }
+    }
+)
 </script>
 
 <style scoped>
