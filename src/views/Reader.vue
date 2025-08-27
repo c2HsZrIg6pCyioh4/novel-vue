@@ -90,11 +90,15 @@ function startReading() {
 }
 
 
+const hasLoadedChapter = ref(false)  // 新增 flag
 async function init() {
   const bookId = route.params.id as string
   const chapterId = route.params.chapter as string
   await loadChaptersList(bookId)
-  await loadChapter(bookId, chapterId)
+  if (!hasLoadedChapter.value) {
+    await loadChapter(bookId, chapterId)
+    hasLoadedChapter.value = true
+  }
 }
 
 onMounted(init)
