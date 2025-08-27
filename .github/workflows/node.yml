@@ -1,0 +1,88 @@
+name: Node.js CI & Release
+
+on:
+  push:
+    tags:
+      - 'v*'  # 只有 push 形如 v1.0.0 的 tag 时触发
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        node-version: [22.14.0]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: 'npm'
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build project
+        run: npm run build --if-present
+
+      - name: Zip dist folders
+        run: |
+          # Tag 版本
+          zip -r dist-${{ github.ref_name }}.zip dist
+          sha256sum dist-${{ github.ref_name }}.zip > dist-${{ github.ref_name }}.zip.sha256
+          # latest 版本
+          zip -r dist-vlatest.zip dist
+          sha256sum dist-vlatest.zip > dist-vlatest.zip.sha256
+          ls -al
+
+      - name: Upload artifact (all zip + checksum)
+        uses: actions/upload-artifact@v4
+        with:
+          name: dist-${{ github.ref_name }}
+          path: |
+            dist-${{ github.ref_name }}.zip
+            dist-${{ github.ref_name }}.zip.sha256
+            dist-vlatest.zip
+            dist-vlatest.zip.sha256
+          if-no-files-found: error
+
+  release:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: dist-${{ github.ref_name }}
+          path: .   # 下载到当前目录
+
+      # 1️⃣ 创建或更新 Tag Release
+      - name: Create/Update Tagged Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          allowUpdates: true
+          replacesArtifacts: true
+          artifacts: |
+            dist-${{ github.ref_name }}.zip
+            dist-${{ github.ref_name }}.zip.sha256
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+      # 2️⃣ 创建或更新 Latest Release
+      - name: Update Latest Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: latest
+          name: Release latest
+          allowUpdates: true
+          replacesArtifacts: true
+          artifacts: |
+            dist-vlatest.zip
+            dist-vlatest.zip.sha256
+          token: ${{ secrets.GITHUB_TOKEN }}
