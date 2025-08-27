@@ -157,3 +157,9 @@ export async function fetchChaptersList(bookId: string): Promise<ChapterDetail[]
     const res = await fetch(`${server}/novels/${bookId}/chapters`)
     return res.json()
 }
+
+// 删除缓存函数
+export function clearServerCache() {
+    localStorage.removeItem(STORAGE_KEY) // 删除服务器列表
+    localStorage.removeItem(CACHE_KEY)   // 删除健康检查缓存
+}

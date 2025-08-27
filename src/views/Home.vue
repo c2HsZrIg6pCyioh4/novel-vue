@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="grid cols-3 mt-3">
+    <div class="grid cols-3 mt-3" v-if="books.length > 0">
       <BookCard 
       v-for="b in books" 
       :key="b.novel_id"
@@ -17,6 +17,11 @@
       }"
     />
     </div>
+    <!-- 没有数据时显示重置服务器按钮 -->
+    <div v-else class="reset-btn">
+      <p>暂无数据或服务器异常</p>
+      <button class="btn" @click="resetServer">重置服务器</button>
+    </div>
   </div>
 </template>
 
@@ -27,6 +32,7 @@ import { fetchBooks } from '../api'
 import type { Novel } from '../types/book'
 import { useBookshelf } from '../stores/bookshelf'
 import BookCard from '../components/BookCard.vue'
+import { clearServerCache } from '../api'
 
 const books = ref<Novel[]>([])
 const shelf = useBookshelf()
@@ -35,4 +41,12 @@ const router = useRouter()
 onMounted(async () => {
   books.value = await fetchBooks()
 })
+
+
+
+// 重置函数
+function resetServer() {
+  clearServerCache()
+  window.location.reload()
+}
 </script>
