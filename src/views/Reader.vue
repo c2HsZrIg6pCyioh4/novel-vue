@@ -40,28 +40,12 @@ const nextId = ref<string | null>(null)
 
 // Markdown 渲染
 const renderedMarkdown = computed(() => {
+  // 简单处理换行 -> <p>
   if (!chapter.value?.content) return ''
-
-  const raw = chapter.value.content.trim()
-
-  try {
-    // 如果包含 markdown 特征（如 #、*、- 等），用 marked 渲染
-    if (/[#*_`>-]/.test(raw)) {
-      return marked(raw)
-    }
-
-    // 否则走简单段落处理：换行 -> <p>
-    return raw
-        .split(/\n+/)
-        .map(p => `<p>${p.replace(/</g, '&lt;').replace(/>/g, '&gt;')}</p>`)
-        .join('')
-  } catch (e) {
-    // fallback，避免 marked 出错
-    return raw
-        .split(/\n+/)
-        .map(p => `<p>${p}</p>`)
-        .join('')
-  }
+  return chapter.value.content
+      .split(/\n+/)
+      .map(p => `<p>${p.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p>`)
+      .join('')
 })
 
 // 加载章节列表（用于导航）
