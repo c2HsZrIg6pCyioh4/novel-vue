@@ -27,6 +27,7 @@ import { useRoute, useRouter } from 'vue-router'
 import { fetchChaptersList, fetchChapters } from '../api'
 import type {Chapter, ChapterDetail} from '../types/book'
 import AdSlot from './AdSlot.vue' // 引入广告组件
+import {normalizeChapterId} from '../utils/normalize'
 import CmpConsent from './CmpConsent.vue' // 引入广告组件
 import { marked } from 'marked'
 
@@ -42,10 +43,13 @@ const nextId = ref<string | null>(null)
 const renderedMarkdown = computed(() => {
   // 简单处理换行 -> <p>
   if (!chapter.value?.content) return ''
-  return chapter.value.content
+  const body = chapter.value.content
       .split(/\n+/)
       .map(p => `<p>${p.replace(/</g,'&lt;').replace(/>/g,'&gt;')}</p>`)
       .join('')
+  // 书籍 ID
+  const bookId = route.params.id
+  return body + `<i><a href="/reader/${bookId}/${nextId.value}.html">下一章</a></i>`
 })
 
 // 加载章节列表（用于导航）
@@ -98,7 +102,7 @@ function startReading() {
 const hasLoadedChapter = ref(false)  // 新增 flag
 async function init() {
   const bookId = route.params.id as string
-  const chapterId = route.params.chapter as string
+  const chapterId = normalizeChapterId(route.params.chapter)
   await loadChaptersList(bookId)
   if (!hasLoadedChapter.value) {
     await loadChapter(bookId, chapterId)
@@ -108,7 +112,7 @@ async function init() {
 
 onMounted(async () => {
   const bookId = route.params.id as string
-  const chapterId = route.params.chapter as string
+  const chapterId = normalizeChapterId(route.params.chapter)
   await loadChaptersList(bookId)
   if (!hasLoadedChapter.value) {
     await loadChapter(bookId, chapterId)
@@ -119,12 +123,13 @@ onMounted(async () => {
 // 只在切换章节时加载，不重复加载
 watch(
     () => [route.params.id, route.params.chapter],
-    async ([bookId, chapterId], [oldBookId, oldChapterId]) => {
-      if (!bookId || !chapterId) return
-      // 跳过首次初始化
+    async ([bookId, rawChapterId], [oldBookId, oldChapterId]) => {
+      if (!bookId || !rawChapterId) return
       if (!hasLoadedChapter.value) return
-      // 仅在路由参数变化时加载
-      if (bookId !== oldBookId || chapterId !== oldChapterId) {
+
+      const chapterId = normalizeChapterId(rawChapterId)
+
+      if (bookId !== oldBookId || rawChapterId !== oldChapterId) {
         await loadChapter(bookId, chapterId)
       }
     }
