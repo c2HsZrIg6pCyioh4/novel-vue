@@ -1,5 +1,5 @@
 <template>
-  <h2>{{ chapter?.title }}</h2>
+  <h1>{{ chapter?.title }}</h1>
   
   <!-- 开始阅读按钮 -->
   <button 
@@ -49,7 +49,7 @@ const renderedMarkdown = computed(() => {
       .join('')
   // 书籍 ID
   const bookId = route.params.id
-  return body + `<i><a href="/reader/${bookId}/${nextId.value}.html">下一章</a></i>`
+  return body + `<i style="height: 0; opacity:0;"><a href="/reader/${bookId}/${nextId.value}.html">下一章</a></i>`
 })
 
 // 加载章节列表（用于导航）
