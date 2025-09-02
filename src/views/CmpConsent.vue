@@ -30,12 +30,32 @@
       </div>
 
       <div class="cmp-footer">
-        <a href="/privacy" target="_blank" class="privacy-link">隐私政策</a>
+        <!-- 点击时打开弹窗 -->
+        <a href="javascript:void(0)" @click="showPrivacy = true" class="privacy-link">隐私政策</a>
         <div class="cmp-actions">
           <button class="btn decline" @click="savePreferences(false)">拒绝全部</button>
           <button class="btn accept" @click="savePreferences(true)">接受全部</button>
           <button class="btn save" @click="savePreferences()">保存设置</button>
         </div>
+      </div>
+    </div>
+  </div>
+  <!-- 隐私政策弹窗 -->
+  <div v-if="showPrivacy" class="privacy-modal">
+    <div class="privacy-content">
+      <h2>隐私政策</h2>
+      <p>我们非常重视您的隐私。本政策解释了我们如何收集、使用和保护您的个人信息。</p>
+      <ul>
+        <li>我们只会收集为提供服务所必需的数据。</li>
+        <li>您的数据不会被出售或出租给第三方。</li>
+        <li>部分 Cookie 用于提升用户体验，例如记住登录状态。</li>
+        <li>分析 Cookie 用于了解用户行为，以优化网站功能。</li>
+        <li>营销 Cookie 可能用于个性化广告。</li>
+      </ul>
+      <p>更多详情请随时联系我们。</p>
+
+      <div class="modal-actions">
+        <button class="btn" @click="showPrivacy = false">关闭</button>
       </div>
     </div>
   </div>
@@ -46,6 +66,7 @@ import { loadGA } from '../utils/loadGA'
 import { ref, onMounted, reactive } from 'vue'
 
 const showConsent = ref(false)
+const showPrivacy = ref(false)
 const consentPreferences = reactive({
   necessary: true,
   analytics: false,
@@ -217,6 +238,33 @@ function savePreferences(acceptAll = null) {
     flex: 1;
     margin: 0 2px;
   }
+}
+/* ✅ 隐私政策弹窗样式 */
+.privacy-modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+}
+
+.privacy-content {
+  background: white;
+  padding: 1.5rem;
+  max-width: 600px;
+  max-height: 80%;
+  overflow-y: auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 12px rgba(0,0,0,0.2);
+}
+
+.privacy-content h2 {
+  margin-top: 0;
 }
 </style>
 ```
