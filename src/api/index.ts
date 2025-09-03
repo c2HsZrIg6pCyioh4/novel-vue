@@ -163,3 +163,36 @@ export function clearServerCache() {
     localStorage.removeItem(STORAGE_KEY) // 删除服务器列表
     localStorage.removeItem(CACHE_KEY)   // 删除健康检查缓存
 }
+
+// 获取友情链接
+export async function fetchFriendLinks(): Promise<
+    { name: string; url: string; icon?: string; desc?: string }[]
+> {
+    const { default: server } = await getServerAddress()
+    try {
+        const res = await fetch(`${server}/friend-links`)
+        if (!res.ok) throw new Error("Failed to fetch friend links")
+        const data = await res.json()
+        if (Array.isArray(data) && data.length > 0) {
+            return data
+        }
+    } catch (err) {
+        console.warn("使用默认友情链接：", err)
+    }
+
+    // 默认回退（更丰富的展示）
+    return [
+        {
+            name: "OpenAI",
+            url: "https://openai.com",
+            icon: "https://openai.com/favicon.ico",
+            desc: "人工智能研究机构，ChatGPT 的开发公司"
+        },
+        {
+            name: "Vue.js",
+            url: "https://vuejs.org",
+            icon: "https://vuejs.org/images/logo.png",
+            desc: "渐进式 JavaScript 框架"
+        }
+    ]
+}
