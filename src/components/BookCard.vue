@@ -20,7 +20,7 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-import type { Novel } from '@/types/book'
+import type { Novel } from '../types/book'
 
 const router = useRouter()
 defineProps<{ book: Novel, inShelf?: boolean }>()
