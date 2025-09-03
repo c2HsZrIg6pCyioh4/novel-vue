@@ -1,6 +1,6 @@
 <template>
-  <div class="grid" style="grid-template-columns: 2fr 1fr; gap: 16px;">
-    <!-- 左侧书籍信息 -->
+  <div class="grid" style="grid-template-rows: auto 1fr; gap: 16px;">
+    <!-- 上方书籍信息 -->
     <div class="card">
       <div class="flex">
         <img :src="book?.cover_url" style="width:120px;height:160px;border-radius:10px;border:1px solid var(--border)" />
@@ -23,12 +23,10 @@
       </div>
     </div>
 
-    <!-- 右侧章节目录 -->
+    <!-- 下方章节目录 -->
     <div class="card">
       <h3 style="margin:0">目录</h3>
-      <ul
-          style="list-style:none;padding:0;margin-top:.5rem;display:grid;gap:.25rem;max-height:60vh;overflow:auto;"
-      >
+      <ul class="chapters-grid">
         <li v-for="c in chapters_list" :key="c.chapter_index">
           <router-link :to="`/reader/${book?.novel_id}/${c.chapter_index}`">
             {{ c.chapter_index }}. {{ c.title }}
@@ -65,3 +63,29 @@ onMounted(async () => {
   }
 })
 </script>
+<style scoped>
+.chapters-grid {
+  list-style: none;
+  padding: .25rem;
+  margin-top: .5rem;
+  display: grid;
+  /* 自动分列，最小宽度 160px，不够就换行 */
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: .5rem;
+  //max-height: 60vh;
+  //overflow: auto;
+}
+
+.chapters-grid li a {
+  display: block;
+  padding: 4px 6px;
+  border-radius: 4px;
+  //color: var(--text);
+  text-decoration: none;
+  transition: background 0.2s;
+}
+
+.chapters-grid li a:hover {
+  background: var(--hover, #f5f5f5);
+}
+</style>
