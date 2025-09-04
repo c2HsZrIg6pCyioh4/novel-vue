@@ -4,16 +4,16 @@
     <div class="info">
       <h3 class="title">{{ book.name }}</h3>
       <p class="meta"><span class="badge">{{ book.author }}</span></p>
-      <p class="desc">{{ book.description }}</p>
       <div class="flex mt-2">
-        <button 
-          class="btn primary" 
-          @click.stop="startReading(book.novel_id)"
+        <button
+            class="btn primary"
+            @click.stop="startReading(book.novel_id)"
         >
           开始阅读
         </button>
         <button class="btn" @click.stop="$emit('toggle', book)">{{ inShelf ? '移出书架' : '加入书架' }}</button>
       </div>
+      <p class="desc">{{ book.description }}</p>
     </div>
   </div>
 </template>
