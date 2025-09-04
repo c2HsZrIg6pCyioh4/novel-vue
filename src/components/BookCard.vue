@@ -33,8 +33,28 @@ function startReading(bookId: string) {
 </script>
 
 <style scoped>
-.book { display:grid; grid-template-columns: 120px 1fr; gap: 1rem; }
-.cover { width: 120px; height: 160px; border-radius: 10px; background-size: cover; background-position: center; border:1px solid var(--border); }
-.title { margin: 0; }
+.book { display:grid; grid-template-columns: 120px 1fr; gap: 1rem;   align-items: start; /* 左右两列顶端对齐 */}
+.cover {
+  aspect-ratio: 3 / 5;   /* 封面常见比例，3:5 */;
+  border-radius: 10px;
+  background-size: cover;
+  background-position: center;
+  border:1px solid var(--border);
+}
+.title {
+  margin: 0;
+  white-space: nowrap;      /* 不换行 */
+  overflow: hidden;         /* 超出隐藏 */
+  text-overflow: ellipsis;  /* 超出用省略号显示 */
+}
+.btn {
+  white-space: nowrap;     /* 不换行 */
+  flex-shrink: 0;          /* 不被压缩 */
+}
+.flex {
+  display: flex;
+  flex-wrap: nowrap;   /* 不允许换行 */
+  gap: 8px;            /* 按钮间距 */
+}
 .desc { color: var(--muted); display:-webkit-box; -webkit-line-clamp:3; -webkit-box-orient:vertical; overflow:hidden; }
 </style>
