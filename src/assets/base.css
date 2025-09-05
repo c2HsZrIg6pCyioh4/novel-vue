@@ -1,43 +1,113 @@
+/* ========= 全局变量（主题配色） ========= */
+/* ========= 浅色模式（light theme） ========= */
 :root {
-    --bg: #ffffff;
-    --text: #0f172a;
-    --muted: #64748b;
-    --primary: #2563eb;
-    --panel: #ffffffcc;
-    --border: #e2e8f0;
+    --bg: #fcfcfe;           /* 柔白背景，护眼 */
+    --text: #1e293b;         /* 深灰蓝，清晰不压迫 */
+    --muted: #6b7280;        /* 次要文字，可读性强 */
+    --primary: #2563eb;      /* 主色保持蓝色（标准） */
+    --panel: #ffffff;        /* 白色面板，加阴影体现层级 */
+    --border: #e5e7eb;       /* 柔和边框 */
 }
+
+/* ========= 深色模式（dark theme） ========= */
 :root[data-theme='dark'] {
-    --bg: #0b0f17;
-    --text: #e5e7eb;
-    --muted: #94a3b8;
-    --primary: #60a5fa;
-    --panel: #0b0f17cc;
-    --border: #1f2937;
+    --bg: #111318;           /* 中性深灰，不偏蓝 */
+    --text: #d8dce3;         /* 柔白，不发光 */
+    --muted: #7a8a99;        /* 可读性好的灰蓝 */
+    --primary: #5bb0e0;      /* 柔和蓝色，不刺眼 */
+    --panel: #161a22cc;      /* 面板略亮，有层次 */
+    --border: #2d3748;       /* 融合边框 */
 }
+
+/* ========= 护眼模式（sepia theme） ========= */
 :root[data-theme='sepia'] {
-    --bg: #f6f9e6;           /* 护眼背景：柔和米绿 */
-    --text: #2d3c2d;         /* 护眼文字：墨绿色 */
-    --muted: #5a6a5a;        /* 次要文字：深灰绿 */
-    --primary: #4a9c6b;      /* 主色：清新翠绿 */
-    --panel: #f0f4dbcc;      /* 卡片背景（半透明护眼色） */
-    --border: #cddcbe;       /* 边框：协调浅绿 */
+    --bg: #f3f5e8;           /* 柔和米黄绿，接近纸张 */
+    --text: #3a4a3a;         /* 深灰绿，清晰不刺眼 */
+    --muted: #6a7a6a;        /* 次要文字，柔和过渡 */
+    --primary: #4a9c6b;      /* 主色保持清新翠绿 */
+    --panel: #edf1e2cc;      /* 面板背景，更融合 */
+    --border: #d8e0cd;       /* 柔和边框 */
 }
-* { box-sizing: border-box; }
-html, body, #app { height: 100%; }
-body { margin: 0; font-family: -apple-system,BlinkMacSystemFont,Segoe UI,Roboto,Helvetica,Arial,Apple Color Emoji,Segoe UI Emoji,Segoe UI Symbol,Noto Color Emoji,sans-serif; background: var(--bg); color: var(--text); }
-a { color: var(--primary); text-decoration: none; }
-a:hover { text-decoration: underline; }
-.container { max-width: 1080px; padding: 16px; margin: 0 auto; }
-.grid { display: grid; gap: 16px; }
-.grid.cols-3 { grid-template-columns: repeat(3,minmax(0,1fr)); }
-@media (max-width: 900px){ .grid.cols-3 { grid-template-columns: repeat(2,minmax(0,1fr)); } }
-@media (max-width: 640px){ .grid.cols-3 { grid-template-columns: 1fr; } }
-.card { border: 1px solid var(--border); background: var(--panel); border-radius: 12px; padding: 12px; }
-.btn { display:inline-flex; align-items:center; gap:.5rem; border:1px solid var(--border); padding:.5rem .75rem; border-radius: 10px; cursor:pointer; background: transparent; }
-.btn.primary { background: var(--primary); border-color: var(--primary); color: white; }
-.input { width:100%; padding:.6rem .8rem; border:1px solid var(--border); background: transparent; border-radius: 10px; color: var(--text); }
-.badge { font-size:.75rem; padding:.15rem .5rem; border-radius: 999px; border:1px solid var(--border); }
-.flex { display:flex; gap:.75rem; align-items:center; }
-.space-between { display:flex; align-items:center; justify-content:space-between; }
-.mt-2 { margin-top: .5rem; }
-.mt-3 { margin-top: 1rem; }
+
+/* ========= 全局基础样式 ========= */
+* { box-sizing: border-box; }  /* 统一盒模型计算方式：包含 padding 和 border */
+html, body, #app { height: 100%; } /* 页面及根容器全高 */
+body {
+    margin: 0; /* 去掉默认外边距 */
+    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji, sans-serif; /* 系统优先字体栈 */
+    background: var(--bg); /* 使用当前主题背景色 */
+    color: var(--text);    /* 使用当前主题文字颜色 */
+}
+a {
+    color: var(--primary); /* 链接文字使用主题主色 */
+    text-decoration: none; /* 默认不显示下划线 */
+}
+a:hover { text-decoration: underline; } /* 鼠标悬停时显示下划线 */
+
+/* ========= 布局相关 ========= */
+.container {
+    max-width: 1080px; /* 最大宽度 */
+    padding: 16px;     /* 内边距 */
+    margin: 0 auto;    /* 居中 */
+}
+.grid {
+    display: grid;  /* 网格布局 */
+    gap: 16px;      /* 网格间距 */
+}
+.grid.cols-3 { grid-template-columns: repeat(3,minmax(0,1fr)); } /* 3列自适应 */
+
+@media (max-width: 900px) {
+    .grid.cols-3 { grid-template-columns: repeat(2,minmax(0,1fr)); } /* 中屏幕：2列 */
+}
+@media (max-width: 640px) {
+    .grid.cols-3 { grid-template-columns: 1fr; } /* 小屏幕：1列 */
+}
+
+/* ========= 卡片 ========= */
+.card {
+    border: 1px solid var(--border); /* 边框颜色 */
+    background: var(--panel);        /* 背景色（半透明） */
+    border-radius: 12px;             /* 圆角 */
+    padding: 12px;                   /* 内边距 */
+}
+
+/* ========= 按钮 ========= */
+.btn {
+    display: inline-flex;  /* 内联弹性布局 */
+    align-items: center;   /* 垂直居中 */
+    gap: .5rem;            /* 图标/文字间距 */
+    border: 1px solid var(--border); /* 边框 */
+    padding: .5rem .75rem; /* 内边距：上下0.5rem 左右0.75rem */
+    border-radius: 10px;   /* 圆角 */
+    cursor: pointer;       /* 鼠标变为点击手势 */
+    background: transparent; /* 背景透明（默认样式） */
+}
+.btn.primary {
+    background: var(--primary);   /* 使用主色背景 */
+    border-color: var(--primary); /* 边框同主色 */
+    color: white;                 /* 文字颜色白色 */
+}
+
+/* ========= 输入框 ========= */
+.input {
+    width: 100%;                   /* 占满父容器宽度 */
+    padding: .6rem .8rem;          /* 内边距 */
+    border: 1px solid var(--border); /* 边框 */
+    background: transparent;       /* 背景透明 */
+    border-radius: 10px;           /* 圆角 */
+    color: var(--text);            /* 文字颜色 */
+}
+
+/* ========= 徽章（小标签） ========= */
+.badge {
+    font-size: .75rem;            /* 字体大小 */
+    padding: .15rem .5rem;        /* 内边距 */
+    border-radius: 999px;         /* 超大圆角，形成胶囊效果 */
+    border: 1px solid var(--border); /* 边框 */
+}
+
+/* ========= 常用工具类 ========= */
+.flex { display:flex; gap:.75rem; align-items:center; } /* 横向flex布局，元素间距0.75rem，垂直居中 */
+.space-between { display:flex; align-items:center; justify-content:space-between; } /* Flex布局，两端对齐 */
+.mt-2 { margin-top: .5rem; }  /* 上边距 0.5rem */
+.mt-3 { margin-top: 1rem; }   /* 上边距 1rem */
