@@ -9,7 +9,7 @@
             class="btn primary"
             @click.stop="startReading(book.novel_id)"
         >
-          开始阅读
+          {{ hasProgress(book.novel_id) ? '继续阅读' : '开始阅读' }}
         </button>
         <button class="btn" @click.stop="$emit('toggle', book)">{{ inShelf ? '移出书架' : '加入书架' }}</button>
       </div>
@@ -25,7 +25,11 @@ import type { Novel } from '../types/book'
 const router = useRouter()
 defineProps<{ book: Novel, inShelf?: boolean }>()
 defineEmits<{ (e:'toggle', book: Novel): void }>()
-
+// 检查是否有阅读进度
+function hasProgress(bookId: string) {
+  return !!localStorage.getItem(`last-read-${bookId}`)
+}
+// 跳转到阅读页
 function startReading(bookId: string) {
   const lastRead = localStorage.getItem(`last-read-${bookId}`)
   router.push(`/reader/${bookId}/${lastRead || '1'}`)

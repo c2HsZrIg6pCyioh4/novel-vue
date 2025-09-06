@@ -4,7 +4,7 @@
     --bg: #fcfcfe;           /* 柔白背景，护眼 */
     --text: #1e293b;         /* 深灰蓝，清晰不压迫 */
     --muted: #6b7280;        /* 次要文字，可读性强 */
-    --primary: #2563eb;      /* 主色保持蓝色（标准） */
+    --primary: #666666;      /* 主色保持蓝色（标准） */
     --panel: #ffffff;        /* 白色面板，加阴影体现层级 */
     --border: #e5e7eb;       /* 柔和边框 */
 }
@@ -34,7 +34,7 @@
 html, body, #app { height: 100%; } /* 页面及根容器全高 */
 body {
     margin: 0; /* 去掉默认外边距 */
-    font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji, sans-serif; /* 系统优先字体栈 */
+    font-family: "PingFang SC",-apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Helvetica, Arial, Apple Color Emoji, Segoe UI Emoji, Segoe UI Symbol, Noto Color Emoji, sans-serif; /* 系统优先字体栈 */
     background: var(--bg); /* 使用当前主题背景色 */
     color: var(--text);    /* 使用当前主题文字颜色 */
 }

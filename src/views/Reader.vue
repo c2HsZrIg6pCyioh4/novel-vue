@@ -12,11 +12,14 @@
 
   <!-- 小说内容显示 -->
   <div class="content" v-if="chapter?.content" v-html="renderedMarkdown"></div>
-  <!-- 分页按钮 -->
-  <div class="flex mt-3" style="justify-content: space-between;">
-    <button class="btn" :disabled="!prevId" @click="go(prevId)">上一章</button>
-    <button class="btn" :disabled="!nextId" @click="go(nextId)">下一章</button>
+
+  <!-- 分页按钮 + 目录 -->
+  <div class="chapter-nav">
+    <button class="nav-btn" :disabled="!prevId" @click="go(prevId)">上一章</button>
+    <button class="nav-btn middle-btn" @click="goToToc">目录</button>
+    <button class="nav-btn" :disabled="!nextId" @click="go(nextId)">下一章</button>
   </div>
+
   <!-- 引入广告组件 -->
   <AdSlot />
 </template>
@@ -84,13 +87,17 @@ async function loadChapter(bookId: string, chapterId: string) {
 function go(chapterId: string | null) {
   if (chapterId) router.push(`/reader/${route.params.id}/${chapterId}`)
 }
+// 跳转目录
+function goToToc() {
+  const bookId = route.params.id as string
+  router.push(`/book/${bookId}`)
+}
 
 // 开始阅读 - 跳转到上次阅读位置或第一章
 function startReading() {
   const bookId = route.params.id as string
   const lastRead = localStorage.getItem(`last-read-${bookId}`)
   const firstChapterId = chaptersList.value[0]?.chapter_index
-  
   if (lastRead) {
     go(lastRead)
   } else if (firstChapterId) {
@@ -158,17 +165,42 @@ watch(
   margin-bottom: 1em;
 }
 
-.flex {
+.chapter-nav {
   display: flex;
-}
-
-.mt-3 {
+  justify-content: space-between;
+  gap: 8px;
   margin-top: 1rem;
+  flex-wrap: nowrap;
 }
 
-.btn {
-  padding: 0.6em 1.2em;
+.nav-btn {
+  flex: 1;
+  max-width: 120px;
+  padding: 0.6em 0;
   font-size: 0.95rem;
+  text-align: center;
+  border-radius: 8px;
+  background-color: #2563eb;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.nav-btn.middle-btn {
+  background-color: #10b981;
+}
+
+.nav-btn:disabled {
+  background-color: #cbd5e1;
+  cursor: not-allowed;
+}
+
+@media (max-width: 480px) {
+  .nav-btn {
+    font-size: 0.9rem;
+    max-width: 30%;
+  }
 }
 
 .start-btn {
