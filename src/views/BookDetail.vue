@@ -1,27 +1,13 @@
 <template>
   <div class="grid" style="grid-template-rows: auto 1fr; gap: 16px;">
     <!-- 上方书籍信息 -->
-    <div class="card">
-      <div class="flex">
-        <img :src="book?.cover_url" style="width:120px;height:160px;border-radius:10px;border:1px solid var(--border)" />
-        <div style="margin-left:12px">
-          <h2 style="margin:0">{{ book?.name }}</h2>
-          <p class="mt-2"><span class="badge">{{ book?.author }}</span></p>
-          <p class="mt-2" style="color:var(--muted)">{{ book?.description }}</p>
-          <div class="flex mt-2" style="gap:8px;">
-            <button
-                class="btn primary"
-                @click="book?.novel_id && startReading(book.novel_id)"
-            >
-              开始阅读
-            </button>
-            <button class="btn" @click="book && shelf.toggle(book)">
-              {{ book && shelf.inShelf(book.novel_id) ? '移出书架' : '加入书架' }}
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <!-- 上方书籍信息：复用 BookCard -->
+    <BookCard
+        v-if="book"
+        :book="book"
+        :inShelf="shelf.inShelf(book.novel_id)"
+        @toggle="shelf.toggle"
+    />
 
     <!-- 下方章节目录 -->
     <div class="card">
@@ -49,6 +35,7 @@ const route = useRoute()
 const book = ref<Novel | null>(null)
 const chapters = ref<Chapter[]>([])
 const chapters_list = ref<ChapterDetail[]>([])
+import BookCard from '../components/BookCard.vue'
 
 const shelf = useBookshelf()
 const { startReading } = useReadingProgress()

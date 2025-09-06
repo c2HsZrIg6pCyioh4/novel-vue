@@ -37,6 +37,8 @@ watchEffect(() => {
   cursor: pointer;
   transition: all 0.2s ease;
   box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+  white-space: nowrap;       /* 不换行 */
+  flex-shrink: 0;            /* 在 flex 容器里不被压缩 */
 }
 
 .btn:hover {
