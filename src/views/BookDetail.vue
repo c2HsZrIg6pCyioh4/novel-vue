@@ -15,7 +15,7 @@
       <ul class="chapters-grid">
         <li v-for="c in chapters_list" :key="c.chapter_index">
           <router-link :to="`/reader/${book?.novel_id}/${c.chapter_index}`">
-            {{ c.chapter_index }}. {{ c.title }}
+            {{ c.title }}
           </router-link>
         </li>
       </ul>
