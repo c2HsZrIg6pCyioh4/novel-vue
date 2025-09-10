@@ -37,7 +37,15 @@ function startReading(bookId: string) {
 </script>
 
 <style scoped>
-.book { display:grid; grid-template-columns: 120px 1fr; gap: 1rem;   align-items: start; /* 左右两列顶端对齐 */}
+.book {
+  display: grid;
+  grid-template-columns: 120px minmax(0, 1fr); /* 右侧区域最多 1fr，最小 0 */
+  gap: 1rem;
+  align-items: start;
+  max-width: 100%; /* 卡片整体不会超过父级 */
+  box-sizing: border-box;
+  overflow: hidden; /* 防止内容撑破 */
+}
 .cover {
   aspect-ratio: 3 / 5;   /* 封面常见比例，3:5 */;
   border-radius: 10px;
