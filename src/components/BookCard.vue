@@ -1,10 +1,9 @@
 <template>
   <div class="card book" @click="$router.push(`/book/${book.novel_id}`)">
-    <img 
-      :src="book.cover_url" 
-      @error="onImageError"
-      class="cover"
-    />
+    <div 
+      class="cover" 
+      :style="{ backgroundImage: `url(${getImageUrl(book.cover_url)})` }"
+    ></div>
     <div class="info">
       <h3 class="title">{{ book.name }}</h3>
       <p class="meta"><span class="badge">{{ book.author }}</span></p>
@@ -23,34 +22,57 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useRouter } from 'vue-router'
 import type { Novel } from '../types/book'
 
-const router = useRouter()
-defineProps<{ book: Novel, inShelf?: boolean }>()
+const props = defineProps<{ book: Novel, inShelf?: boolean }>()
 defineEmits<{ (e:'toggle', book: Novel): void }>()
+
+const router = useRouter()
 
 // 默认图片URL - 使用当前域名
 const defaultImageUrl = `https://${window.location.hostname}/webp/2025/12/16/6f3b3649-f469-4497-a0a2-2966c98f3e91.webp`
 
-// 图片加载失败处理
-function onImageError(event: Event) {
-  const imgElement = event.target as HTMLImageElement
-  // 检查当前图片是否已经是默认图片，避免循环错误
-  if (imgElement.src !== defaultImageUrl) {
-    imgElement.src = defaultImageUrl
-  } else {
-    // 如果默认图片也加载失败，则不进行任何操作或设置一个固定的后备方案
-    // 这里我们简单地移除错误处理程序以防止进一步的错误处理
-    imgElement.onerror = null
+// 存储已知无效的图片URL，避免重复请求
+const invalidUrls = ref(new Set<string>())
+
+// 获取图片URL，如果已知无效则返回默认图片
+function getImageUrl(url: string): string {
+  if (invalidUrls.value.has(url)) {
+    return defaultImageUrl
+  }
+  return url
+}
+
+// 预加载图片并检测是否有效
+function preloadImage(url: string): Promise<boolean> {
+  return new Promise((resolve) => {
+    const img = new Image()
+    img.onload = () => resolve(true)
+    img.onerror = () => resolve(false)
+    img.src = url
+  })
+}
+
+// 检查封面图片是否有效，无效则标记为已知无效
+async function checkCoverImage(url: string) {
+  const isValid = await preloadImage(url)
+  if (!isValid) {
+    invalidUrls.value.add(url)
   }
 }
+
+// 组件挂载时检查书籍封面
+onMounted(() => {
+  checkCoverImage(props.book.cover_url)
+})
 
 // 检查是否有阅读进度
 function hasProgress(bookId: string) {
   return !!localStorage.getItem(`last-read-${bookId}`)
 }
+
 // 跳转到阅读页
 function startReading(bookId: string) {
   const lastRead = localStorage.getItem(`last-read-${bookId}`)
@@ -71,8 +93,9 @@ function startReading(bookId: string) {
 .cover {
   aspect-ratio: 3 / 5;   /* 封面常见比例，3:5 */;
   border-radius: 10px;
+  background-size: cover;
+  background-position: center;
   border:1px solid var(--border);
-  object-fit: cover;
 }
 .title {
   margin: 0;
