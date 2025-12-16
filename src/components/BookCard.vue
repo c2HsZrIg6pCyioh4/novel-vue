@@ -45,12 +45,30 @@ function getImageUrl(url: string): string {
   return url
 }
 
-// 预加载图片并检测是否有效
+// 预加载图片并检测是否有效，设置1秒超时
 function preloadImage(url: string): Promise<boolean> {
   return new Promise((resolve) => {
     const img = new Image()
     img.onload = () => resolve(true)
     img.onerror = () => resolve(false)
+    
+    // 设置1秒超时
+    const timeout = setTimeout(() => {
+      img.src = '' // 清空src以取消加载
+      resolve(false)
+    }, 1000)
+    
+    // 如果图片加载完成，清除超时
+    img.onload = () => {
+      clearTimeout(timeout)
+      resolve(true)
+    }
+    
+    img.onerror = () => {
+      clearTimeout(timeout)
+      resolve(false)
+    }
+    
     img.src = url
   })
 }
