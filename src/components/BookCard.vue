@@ -37,9 +37,14 @@ const defaultImageUrl = `https://${window.location.hostname}/webp/2025/12/16/6f3
 // 图片加载失败处理
 function onImageError(event: Event) {
   const imgElement = event.target as HTMLImageElement
-  imgElement.src = defaultImageUrl
-  // 防止循环错误
-  imgElement.onerror = null
+  // 检查当前图片是否已经是默认图片，避免循环错误
+  if (imgElement.src !== defaultImageUrl) {
+    imgElement.src = defaultImageUrl
+  } else {
+    // 如果默认图片也加载失败，则不进行任何操作或设置一个固定的后备方案
+    // 这里我们简单地移除错误处理程序以防止进一步的错误处理
+    imgElement.onerror = null
+  }
 }
 
 // 检查是否有阅读进度
