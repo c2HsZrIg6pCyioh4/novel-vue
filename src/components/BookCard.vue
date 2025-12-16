@@ -1,6 +1,10 @@
 <template>
   <div class="card book" @click="$router.push(`/book/${book.novel_id}`)">
-    <div class="cover" :style="{ backgroundImage: `url(${book.cover_url})` }"></div>
+    <img 
+      :src="book.cover_url" 
+      @error="onImageError"
+      class="cover"
+    />
     <div class="info">
       <h3 class="title">{{ book.name }}</h3>
       <p class="meta"><span class="badge">{{ book.author }}</span></p>
@@ -19,12 +23,25 @@
 </template>
 
 <script setup lang="ts">
+import { ref } from 'vue'
 import { useRouter } from 'vue-router'
 import type { Novel } from '../types/book'
 
 const router = useRouter()
 defineProps<{ book: Novel, inShelf?: boolean }>()
 defineEmits<{ (e:'toggle', book: Novel): void }>()
+
+// 默认图片URL - 使用当前域名
+const defaultImageUrl = `https://${window.location.hostname}/webp/2025/12/16/6f3b3649-f469-4497-a0a2-2966c98f3e91.webp`
+
+// 图片加载失败处理
+function onImageError(event: Event) {
+  const imgElement = event.target as HTMLImageElement
+  imgElement.src = defaultImageUrl
+  // 防止循环错误
+  imgElement.onerror = null
+}
+
 // 检查是否有阅读进度
 function hasProgress(bookId: string) {
   return !!localStorage.getItem(`last-read-${bookId}`)
@@ -49,9 +66,8 @@ function startReading(bookId: string) {
 .cover {
   aspect-ratio: 3 / 5;   /* 封面常见比例，3:5 */;
   border-radius: 10px;
-  background-size: cover;
-  background-position: center;
   border:1px solid var(--border);
+  object-fit: cover;
 }
 .title {
   margin: 0;
