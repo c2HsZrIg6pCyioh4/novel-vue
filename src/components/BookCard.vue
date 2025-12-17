@@ -2,7 +2,7 @@
   <div class="card book" @click="$router.push(`/book/${book.novel_id}`)">
     <div 
       class="cover" 
-      :style="{ backgroundImage: `url(${getImageUrl(book.cover_url)})` }"
+      :style="{ backgroundImage: `url(${displayImageUrl})` }"
     ></div>
     <div class="info">
       <h3 class="title">{{ book.name }}</h3>
@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import type { Novel } from '../types/book'
 
@@ -34,23 +34,13 @@ const router = useRouter()
 // 默认图片URL - 使用当前域名
 const defaultImageUrl = `https://${window.location.hostname}/webp/2025/12/16/6f3b3649-f469-4497-a0a2-2966c98f3e91.webp`
 
-// 存储已知无效的图片URL，避免重复请求
-const invalidUrls = ref(new Set<string>())
-
-// 获取图片URL，如果已知无效则返回默认图片
-function getImageUrl(url: string): string {
-  if (invalidUrls.value.has(url)) {
-    return defaultImageUrl
-  }
-  return url
-}
+// 显示的图片URL
+const displayImageUrl = ref(defaultImageUrl)
 
 // 预加载图片并检测是否有效，设置1秒超时
 function preloadImage(url: string): Promise<boolean> {
   return new Promise((resolve) => {
     const img = new Image()
-    img.onload = () => resolve(true)
-    img.onerror = () => resolve(false)
     
     // 设置1秒超时
     const timeout = setTimeout(() => {
@@ -73,17 +63,31 @@ function preloadImage(url: string): Promise<boolean> {
   })
 }
 
-// 检查封面图片是否有效，无效则标记为已知无效
-async function checkCoverImage(url: string) {
+// 加载书籍封面图片
+async function loadBookCover(url: string) {
+  // 先显示默认图片
+  displayImageUrl.value = defaultImageUrl
+  
+  // 尝试加载实际图片
   const isValid = await preloadImage(url)
-  if (!isValid) {
-    invalidUrls.value.add(url)
+  if (isValid) {
+    // 如果图片有效，则更新显示为实际图片
+    displayImageUrl.value = url
   }
+  // 如果图片无效，则保持默认图片
 }
 
-// 组件挂载时检查书籍封面
+// 监听书籍封面URL变化
+watch(
+  () => props.book.cover_url,
+  (newUrl) => {
+    loadBookCover(newUrl)
+  }
+)
+
+// 组件挂载时加载书籍封面
 onMounted(() => {
-  checkCoverImage(props.book.cover_url)
+  loadBookCover(props.book.cover_url)
 })
 
 // 检查是否有阅读进度
