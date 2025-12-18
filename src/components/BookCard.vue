@@ -22,7 +22,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed, watch } from 'vue'
+import { ref, onMounted, watch } from 'vue'
 import { useRouter } from 'vue-router'
 import type { Novel } from '../types/book'
 
@@ -71,10 +71,10 @@ async function loadBookCover(url: string) {
   // 尝试加载实际图片
   const isValid = await preloadImage(url)
   if (isValid) {
-    // 如果图片有效，则更新显示为实际图片
+    // 如果图片有效，则立即更新显示为实际图片
     displayImageUrl.value = url
   }
-  // 如果图片无效，则保持默认图片
+  // 如果图片无效，则保持显示默认图片
 }
 
 // 监听书籍封面URL变化
@@ -118,6 +118,9 @@ function startReading(bookId: string) {
   background-size: cover;
   background-position: center;
   border:1px solid var(--border);
+  
+  /* 添加过渡效果使图片替换更平滑 */
+  transition: background-image 0.3s ease;
 }
 .title {
   margin: 0;
